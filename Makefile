@@ -1,13 +1,17 @@
 CC = gcc
 CFLAGS = -Wall -pedantic
+LDFLAGS =
 
-all: part1
+all: dbl_vector
+	echo "Success"
 
-part1: dbl_vector.o main.o
+dbl_vector: main.o dbl_vector.o
 
 main.o: main.c
 
-dbl_vector: dbl_vector.c
+dbl_vector.o: dbl_vector.c
+
+
 
 clean:
 	rm -f fib *.o
