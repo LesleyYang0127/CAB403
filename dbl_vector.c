@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include "dbl_vector.h"
 
+#define DV_INITIAL_CAPACITY 4
+#define DV_GROWTH_FACTOR 1.25
+
 void dv_init( dbl_vector_t* vec ) 
 {
-    // INSERT SOLUTION HERE
+    malloc(sizeof(double)*DV_INITIAL_CAPACITY);
 }
 
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) 
