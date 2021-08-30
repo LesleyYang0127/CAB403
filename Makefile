@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc -lm
 CFLAGS = -Wall -pedantic
 LDFLAGS =
 
