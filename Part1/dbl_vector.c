@@ -28,29 +28,24 @@ void dv_init( dbl_vector_t* vec )
 
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) 
 {
-    //Initilise Apporporate Variables
+    //Initialise Vairables
     size_t old_capacity = vec->capacity;
     size_t old_size = vec->size;
     double* old_data = vec->data;
+    size_t new_capacity = fmax(old_capacity*DV_GROWTH_FACTOR,new_size);
     size_t new_mem_size = sizeof(double) * new_size;
-    
-    size_t new_cap = fmax(old_capacity*DV_GROWTH_FACTOR,new_size);
-    bool Check2 = new_size <= old_capacity;
 
-    //Assign Currently Filled Data to Size
     vec->size = old_size;
-
-    if(Check2)
+    bool Check = new_size <= old_capacity;
+    if(Check)
     {
         vec->capacity = old_capacity;
         vec->data = old_data;
     }
     else
     {
-        //Asign Values to struct
-        vec->capacity = new_cap;
+        vec->capacity = new_capacity;
         vec->data = realloc(old_data,new_mem_size);
-        
     }
 }
 
@@ -64,7 +59,21 @@ void dv_destroy( dbl_vector_t* vec )
 
 void dv_copy( dbl_vector_t* vec, dbl_vector_t* dest ) 
 {
-    // INSERT SOLUTION HERE
+    /**
+    //Initial check
+    bool Initial = &vec != &dest;
+    size_t size_to_copy;
+    if(Initial)
+    {
+        size_to_copy = vec->size;
+        dest->size = size_to_copy;
+        dv_ensure_capacity(dest,size_to_copy);
+        for(int i = 0; i < size_to_copy; i++)
+        {
+            dest->data[i] = vec->data[i];
+        }
+    }
+    **/
 }
 
 void dv_clear( dbl_vector_t* vec ) 
@@ -86,7 +95,6 @@ void dv_push( dbl_vector_t* vec, double new_item )
     vec->size = OLD_Size+1;
     dv_ensure_capacity(vec,OLD_Size+1);
 
-        
     //Go through old data and reassign to vector
     for(int i = 0; i < OLD_Size; i++)
     {
