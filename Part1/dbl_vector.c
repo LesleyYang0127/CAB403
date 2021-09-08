@@ -10,7 +10,8 @@
 //TODO LIST
 /**
  *
- * 1. Currpoted Top size
+ * 1. Pushing 10 Items onto vector
+ * 2. Inserting not quite right
  *  
  **/
 void dv_init( dbl_vector_t* vec ) 
@@ -91,7 +92,6 @@ void dv_push( dbl_vector_t* vec, double new_item )
 
     vec->data[OLD_Size] = new_item;
 
-
 }
 
 void dv_pop( dbl_vector_t* vec ) 
@@ -144,22 +144,22 @@ void dv_insert_at( dbl_vector_t* vec, size_t pos, double new_item )
     
     vec->size = OLD_Size + 1;
     dv_ensure_capacity(vec,OLD_Size+1);
+    int loc = fmin(pos,OLD_Size);
     
     //Go though the data and add it to the array (skip new item)
     for(size_t i = 0; i < vec->size; i++)
     {
-
-        if(i < pos)
+        if(i < loc)
         {
             vec->data[i] = TO_Add[i];
         }
-        else if (i > pos)
+        else if (i > loc)
         {
             vec->data[i] = TO_Add[i-1];
         }  
     }
     //Insert new item into location
-    vec->data[pos] = new_item;
+    vec->data[loc] = new_item;
 
 }
 
@@ -169,7 +169,32 @@ void dv_remove_at( dbl_vector_t* vec, size_t pos )
     double* OLD_Data = (vec->data);
 
     bool check = pos >= OLD_Size;
+    double org[OLD_Size];
+    for(int j = 0; j < OLD_Size; j++)
+    {
+        org[j] = vec->data[j];
+    }
 
+    if(check)
+    {
+        vec->size = OLD_Size;
+    }
+    else
+    {
+        vec->size = OLD_Size - 1;
+        for(int i = 0; i < OLD_Size; i++)
+        {
+            if(i < pos)
+            {
+                vec->data[i] = org[i];
+            }
+            else if(i > pos)
+            {
+                vec->data[i-1] = org[i];
+            }
+        }
+    }
+    /**
     if(!check)
     {
         vec->size = OLD_Size - 1;
@@ -183,6 +208,7 @@ void dv_remove_at( dbl_vector_t* vec, size_t pos )
             vec->data[i-1] = OLD_Data[i+1]; 
         }
     }
+    **/
 
 }
 
