@@ -95,14 +95,8 @@ void dv_push( dbl_vector_t* vec, double new_item )
     vec->size = OLD_Size+1;
     dv_ensure_capacity(vec,OLD_Size+1);
 
-    //Go through old data and reassign to vector
-    for(int i = 0; i < OLD_Size; i++)
-    {
-        vec->data[i] = OLD_Data[i];
-    }
-
-
     vec->data[OLD_Size] = new_item;
+
 
 }
 
@@ -125,7 +119,6 @@ void dv_pop( dbl_vector_t* vec )
     {
         vec->size=0;
     }
-    
 
 }
 
@@ -145,30 +138,36 @@ double dv_last( dbl_vector_t* vec )
 
 void dv_insert_at( dbl_vector_t* vec, size_t pos, double new_item ) 
 {
-    
+    //Initilise Variables    
     size_t OLD_Size = vec->size;
-    double* OLD_Data = vec->data;
-    size_t OLD_Capacity = vec->capacity;
-    size_t loc = fmin(pos,OLD_Size);
 
+    //Intilise a copy array
+    double TO_Add[OLD_Size];
+    for(int j = 0; j < OLD_Size; j++)
+    {
+        TO_Add[j] = vec->data[j];
+    }
+    
+    size_t OLD_Capacity = vec->capacity;
     vec->size = OLD_Size + 1;
     dv_ensure_capacity(vec,OLD_Size+1);
+    
 
-    for(int i = 0; i < (vec->size); i++)
+    //Go though the data and add it to the array (skip new item)
+    for(size_t i = 0; i < vec->size; i++)
     {
-        if(i < loc)
+
+        if(i < pos)
         {
-            vec->data[i] = OLD_Data[i];
+            vec->data[i] = TO_Add[i];
         }
-        else if(i == loc)
+        else if (i > pos)
         {
-            vec->data[i] = new_item;
-        }
-        else
-        {
-            vec->data[i] = OLD_Data[i-1];
-        }
+            vec->data[i] = TO_Add[i-1];
+        }  
     }
+    //Insert new item into location
+    vec->data[pos] = new_item;
 
 }
 
