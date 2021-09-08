@@ -10,20 +10,18 @@
 //TODO LIST
 /**
  *
- * 1. There is an error in pushing not sure what is occuring but it doesn't happen in the pushing function
- * 2. Insert Into has an error (this could be because old data is being updated)
+ * 1. Currpoted Top size
  *  
  **/
 void dv_init( dbl_vector_t* vec ) 
-{
-    size_t NEW_MEM_Size = sizeof(double)*DV_INITIAL_CAPACITY;
-    
+{   
+    size_t new_mem_size = sizeof(double) * DV_INITIAL_CAPACITY; 
     //Set that there is no data
     vec->size = 0;
     //Set the capacity to initial value
     vec->capacity = DV_INITIAL_CAPACITY;
     //Allocate Apporporate Memory
-    vec->data = malloc(NEW_MEM_Size);
+    vec->data = (double *)malloc(new_mem_size);
 }
 
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) 
@@ -33,7 +31,7 @@ void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size )
     size_t old_size = vec->size;
     double* old_data = vec->data;
     size_t new_capacity = fmax(old_capacity*DV_GROWTH_FACTOR,new_size);
-    size_t new_mem_size = sizeof(double) * new_size;
+    size_t new_mem_size = sizeof(double) * new_capacity;
 
     vec->size = old_size;
     bool Check = new_size <= old_capacity;
@@ -55,25 +53,22 @@ void dv_destroy( dbl_vector_t* vec )
     vec->size = 0;
     vec->capacity=0;
     free(vec->data);
+    vec->data = NULL;
 }
 
 void dv_copy( dbl_vector_t* vec, dbl_vector_t* dest ) 
 {
-    /**
-    //Initial check
-    bool Initial = &vec != &dest;
-    size_t size_to_copy;
-    if(Initial)
+    //Initial Check
+    bool Check_Address = &vec != &dest;
+    dest->size = vec->size;
+    if(Check_Address)
     {
-        size_to_copy = vec->size;
-        dest->size = size_to_copy;
-        dv_ensure_capacity(dest,size_to_copy);
-        for(int i = 0; i < size_to_copy; i++)
+        dv_ensure_capacity(dest,vec->size);
+        for(int i = 0; i < vec->size; i++)
         {
             dest->data[i] = vec->data[i];
         }
     }
-    **/
 }
 
 void dv_clear( dbl_vector_t* vec ) 
@@ -89,7 +84,6 @@ void dv_push( dbl_vector_t* vec, double new_item )
 {
     //Declare and Store Variables
     size_t OLD_Size = vec->size;
-    double* OLD_Data = vec->data;
 
     //Prepare for storage
     vec->size = OLD_Size+1;
@@ -148,11 +142,9 @@ void dv_insert_at( dbl_vector_t* vec, size_t pos, double new_item )
         TO_Add[j] = vec->data[j];
     }
     
-    size_t OLD_Capacity = vec->capacity;
     vec->size = OLD_Size + 1;
     dv_ensure_capacity(vec,OLD_Size+1);
     
-
     //Go though the data and add it to the array (skip new item)
     for(size_t i = 0; i < vec->size; i++)
     {
