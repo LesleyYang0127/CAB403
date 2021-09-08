@@ -16,15 +16,14 @@
  **/
 void dv_init( dbl_vector_t* vec ) 
 {
-    size_t new_mem_size = sizeof(double)*DV_INITIAL_CAPACITY;
+    size_t NEW_MEM_Size = sizeof(double)*DV_INITIAL_CAPACITY;
+    
     //Set that there is no data
     vec->size = 0;
     //Set the capacity to initial value
     vec->capacity = DV_INITIAL_CAPACITY;
     //Allocate Apporporate Memory
-    printf("Here when assigning memory");
-    vec->data = malloc(new_mem_size);
-    printf("Passed memory \n");
+    vec->data = malloc(NEW_MEM_Size);
 }
 
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) 
@@ -34,13 +33,14 @@ void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size )
     size_t old_size = vec->size;
     double* old_data = vec->data;
     size_t new_capacity = fmax(old_capacity*DV_GROWTH_FACTOR,new_size);
-    size_t new_mem_size = sizeof(double *) * new_size;
-    vec->size = new_size;
-    bool Check = new_size <= old_capacity;
+    size_t new_mem_size = sizeof(double) * new_size;
 
+    vec->size = old_size;
+    bool Check = new_size <= old_capacity;
     if(Check)
     {
         vec->capacity = old_capacity;
+        vec->data = old_data;
     }
     else
     {
@@ -59,23 +59,21 @@ void dv_destroy( dbl_vector_t* vec )
 
 void dv_copy( dbl_vector_t* vec, dbl_vector_t* dest ) 
 {
-    /***
+    /**
     //Initial check
     bool Initial = &vec != &dest;
-    printf("Result of Copy: %d \n", Initial);
     size_t size_to_copy;
     if(Initial)
     {
         size_to_copy = vec->size;
-        printf("Size to Copy: %ld \n",size_to_copy );
+        dest->size = size_to_copy;
         dv_ensure_capacity(dest,size_to_copy);
-        printf("This is here\n");
         for(int i = 0; i < size_to_copy; i++)
         {
             dest->data[i] = vec->data[i];
         }
     }
-    ***/
+    **/
 }
 
 void dv_clear( dbl_vector_t* vec ) 
