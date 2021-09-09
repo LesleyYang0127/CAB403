@@ -26,6 +26,15 @@ char* op_names[] = {
 };
 
 /**
+ * 
+ * TODO List:
+ * 
+ * 1. Worker not getting killed
+ * 
+ * /
+
+
+/**
  * Controller: initialise a shared_object_t, creating a block of shared memory
  * with the designated name, and setting its storage capacity to the size of a
  * shared data block.
@@ -68,7 +77,7 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // that shm->data is NULL and return false.
     // INSERT SOLUTION HERE
     int check_value;
-    check_value = shm_open(shm->name,(O_RDWR | O_CREAT | O_EXCL),( S_IRUSR | S_IWUSR ));
+    check_value = shm_open(shm->name,(O_RDWR | O_CREAT),( S_IRUSR | S_IWUSR ));
     if(check_value == -1)
     {
         shm->data = NULL;
@@ -197,6 +206,12 @@ bool get_shared_object( shared_memory_t* shm, const char* share_name ) {
     {
         return false;
     }
+
+    bool final_check = shm->data == NULL;
+    if(final_check)
+    {
+        return false;
+    }
     // Modify the remaining stub only if necessary.
     return true;
 }
@@ -242,6 +257,7 @@ bool do_work( shared_memory_t* shm ) {
     bool proceed = shm->data->operation == op_quit;
     if(proceed)
     {
+        //This is all working at this stage
         munmap(shm->data,sizeof(shared_data_t));
         shm->fd = -1;
         shm->data = NULL;
@@ -253,28 +269,36 @@ bool do_work( shared_memory_t* shm ) {
         decision = shm->data->operation;
         lhs_num = shm->data->lhs;
         rhs_num = shm->data->rhs;
+        placeHolderResult = 0;
 
+        
         switch(decision)
         {
+            //Nothing wrong with the set up of the numbers/arthemtic
             case(op_add):
             {
-                placeHolderResult = lhs_num + rhs_num;
+                placeHolderResult = (double)(lhs_num+rhs_num);
+                break;
             }
             case(op_sub):
             {
-                placeHolderResult = lhs_num - rhs_num;
+                placeHolderResult = (double)(lhs_num-rhs_num);
+                break;
             }
             case(op_div):
             {
-                placeHolderResult = lhs_num/rhs_num;
+                placeHolderResult = (double)(lhs_num/rhs_num);
+                break;
             }
             case(op_mul):
             {
-                placeHolderResult = lhs_num*rhs_num;
+                placeHolderResult = (double)(lhs_num*rhs_num);
+                break;
             }
             default:
             {
                 /* DO NOTHING */
+                break;
             }
         }
         shm->data->result = placeHolderResult;
@@ -334,7 +358,7 @@ void worker_main() {
 
     if ( get_shared_object( &shm, SHARE_NAME ) ) {
         while ( do_work( &shm ) ) {}
-
+        
         printf( "Worker has been told to quit.\n" );
     }
     else {
