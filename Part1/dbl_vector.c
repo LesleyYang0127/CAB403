@@ -166,7 +166,6 @@ void dv_insert_at( dbl_vector_t* vec, size_t pos, double new_item )
 void dv_remove_at( dbl_vector_t* vec, size_t pos ) 
 {
     size_t OLD_Size = (vec->size);
-    double* OLD_Data = (vec->data);
 
     bool check = pos >= OLD_Size;
     double org[OLD_Size];
@@ -194,22 +193,6 @@ void dv_remove_at( dbl_vector_t* vec, size_t pos )
             }
         }
     }
-    /**
-    if(!check)
-    {
-        vec->size = OLD_Size - 1;
-        for(int i = 0; i < OLD_Size; i++)
-        if(i < pos)
-        {
-            vec->data[i] = OLD_Data[i];
-        }
-        else if (i > pos)
-        {
-            vec->data[i-1] = OLD_Data[i+1]; 
-        }
-    }
-    **/
-
 }
 
 void dv_foreach( dbl_vector_t* vec, void (*callback)(double, void*), void* info ) 
