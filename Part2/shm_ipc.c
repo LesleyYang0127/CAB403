@@ -25,14 +25,6 @@ char* op_names[] = {
     "add", "sub", "mul", "div", "quit"
 };
 
-/**
- * 
- * TODO List:
- * 
- * 1. Worker not getting killed
- * 
- * /
-
 
 /**
  * Controller: initialise a shared_object_t, creating a block of shared memory
@@ -255,15 +247,7 @@ bool do_work( shared_memory_t* shm ) {
     // as required.
     // INSERT IMPLEMENTATION HERE
     bool proceed = shm->data->operation == op_quit;
-    if(proceed)
-    {
-        //This is all working at this stage
-        munmap(shm->data,sizeof(shared_data_t));
-        shm->fd = -1;
-        shm->data = NULL;
-        retVal = false;
-    }
-    else
+    if(!proceed)
     {
         //Assign Relevant variables if an operation occurs
         decision = shm->data->operation;
@@ -311,7 +295,14 @@ bool do_work( shared_memory_t* shm ) {
     // done _after_ posting the semaphore. Un-map the shared data, and assign
     // values to shm->data and shm-fd as noted above.
     // INSERT IMPLEMENTATION HERE (This is done above)
-
+    //This is all working at this stage
+    if(proceed)
+    {
+        munmap(shm->data,sizeof(shared_data_t));
+        shm->fd = -1;
+        shm->data = NULL;
+        retVal = false;
+    }
     // Keep this line to return the result.
     return retVal;
 }
