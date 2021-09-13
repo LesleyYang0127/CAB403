@@ -10,8 +10,6 @@
 //TODO LIST
 /**
  *
- * 1. Pushing 10 Items onto vector
- * 2. Inserting not quite right
  *  
  **/
 void dv_init( dbl_vector_t* vec ) 
@@ -79,6 +77,7 @@ void dv_clear( dbl_vector_t* vec )
     {
         vec->data[i] = 0;
     }
+    vec->size = 0;
 }
 
 void dv_push( dbl_vector_t* vec, double new_item ) 
@@ -166,7 +165,6 @@ void dv_insert_at( dbl_vector_t* vec, size_t pos, double new_item )
 void dv_remove_at( dbl_vector_t* vec, size_t pos ) 
 {
     size_t OLD_Size = (vec->size);
-    double* OLD_Data = (vec->data);
 
     bool check = pos >= OLD_Size;
     double org[OLD_Size];
