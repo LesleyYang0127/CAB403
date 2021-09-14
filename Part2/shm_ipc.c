@@ -69,7 +69,7 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // that shm->data is NULL and return false.
     // INSERT SOLUTION HERE
     int check_value;
-    check_value = shm_open(shm->name,(O_RDWR | O_CREAT),( S_IRUSR | S_IWUSR ));
+    check_value = shm_open(shm->name,(O_RDWR | O_CREAT),(S_IRWXU));
     if(check_value == -1)
     {
         shm->data = NULL;
@@ -82,7 +82,11 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // Set the capacity of the shared memory object via ftruncate. If the 
     // operation fails, ensure that shm->data is NULL and return false. 
     // INSERT SOLUTION HERE
-    ftruncate(shm->fd,sizeof(shared_data_t));
+    if(ftruncate(shm->fd,sizeof(shared_data_t))== -1)
+    {
+        shm->data = NULL;
+        return false;
+    }
 
     // Otherwise, attempt to map the shared memory via mmap, and save the address
     // in shm->data. If mapping fails, return false.
@@ -185,7 +189,7 @@ bool get_shared_object( shared_memory_t* shm, const char* share_name ) {
     // shm->fd. If the operation fails, ensure that shm->data is 
     // NULL and return false.
     // INSERT SOLUTION HERE
-    shm->fd = shm_open(share_name,(O_RDWR),( S_IRUSR | S_IWUSR ));
+    shm->fd = shm_open(share_name,(O_RDWR),0);
     if(shm->fd == -1)
     {
         return false;
@@ -282,6 +286,7 @@ bool do_work( shared_memory_t* shm ) {
             default:
             {
                 /* DO NOTHING */
+                //Thi is for the case of quit (which is handled earlier)
                 break;
             }
         }
