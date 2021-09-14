@@ -69,7 +69,7 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // that shm->data is NULL and return false.
     // INSERT SOLUTION HERE
     int check_value;
-    check_value = shm_open(shm->name,(O_RDWR | O_CREAT | O_EXCL),(S_IRUSR|S_IWUSR));
+    check_value = shm_open(shm->name,(O_RDWR | O_CREAT),(S_IRWXU));
     if(check_value == -1)
     {
         shm->data = NULL;
