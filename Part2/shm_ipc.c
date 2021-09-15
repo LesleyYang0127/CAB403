@@ -27,6 +27,11 @@ char* op_names[] = {
 
 
 /**
+ * 
+ * TODOList:
+ * 1. Shm_Open failed
+ * 2. 
+ * 
  * Controller: initialise a shared_object_t, creating a block of shared memory
  * with the designated name, and setting its storage capacity to the size of a
  * shared data block.
@@ -61,7 +66,6 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // Remove any previous instance of the shared memory object, if it exists.
     // INSERT SOLUTION HERE    
     shm_unlink(share_name);
-    bool toReturn = true;
 
     // Assign share name to shm->name.
     // INSERT SOLUTION HERE
@@ -71,11 +75,11 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // resulting file descriptor in shm->fd. If creation failed, ensure 
     // that shm->data is NULL and return false.
     // INSERT SOLUTION HERE
-    shm->fd  = shm_open(shm->name,(O_RDWR | O_CREAT),(S_IRWXU));
+    shm->fd  = shm_open(shm->name,(O_RDWR | O_CREAT),0666);
     if(shm->fd == -1)
     {
         shm->data = NULL;
-        toReturn = false;
+        return false;
     }
     // Set the capacity of the shared memory object via ftruncate. If the 
     // operation fails, ensure that shm->data is NULL and return false. 
@@ -83,23 +87,23 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     if(ftruncate(shm->fd,(off_t)(sizeof(shared_data_t)))==-1)
     {
         shm->data = NULL;
-        toReturn = false;
+        return false;
     }
 
     // Otherwise, attempt to map the shared memory via mmap, and save the address
     // in shm->data. If mapping fails, return false.
     // INSERT SOLUTION HERE
-    shm->data = mmap(NULL,sizeof(shared_data_t), (PROT_WRITE | PROT_READ), MAP_SHARED, shm->fd, 0);
+    shm->data = mmap(0,sizeof(shared_data_t), (PROT_WRITE | PROT_READ), MAP_SHARED, shm->fd, 0);
     if(shm->data == MAP_FAILED)
     {
-        toReturn = false;
+        return false;
     }
     // Do not alter the following semaphore initialisation code.
     sem_init( &shm->data->controller_semaphore, 1, 0 );
     sem_init( &shm->data->worker_semaphore, 1, 0 );
 
     // If we reach this point we should return true.
-    return toReturn;
+    return true;
 }
 
 /**
@@ -186,29 +190,41 @@ bool get_shared_object( shared_memory_t* shm, const char* share_name ) {
     // Get a file descriptor connected to shared memory object and save in 
     // shm->fd. If the operation fails, ensure that shm->data is 
     // NULL and return false.
-    // INSERT SOLUTION HERE
-    bool toReturn = true;
-    shm->fd = shm_open(share_name,(O_RDWR),0);
-    if(shm->fd == -1)
-    {
-        toReturn = false;
-    }
     // Otherwise, attempt to map the shared memory via mmap, and save the address
     // in shm->data. If mapping fails, return false.
     // INSERT SOLUTION HERE
-    shm->data = mmap(NULL ,sizeof(shared_data_t), (PROT_WRITE | PROT_READ), MAP_SHARED, shm->fd, 0);
-    if(shm->data == MAP_FAILED)
+    // INSERT SOLUTION HERE
+    
+    shm->fd = shm_open(share_name,(O_RDWR),0);
+    if(shm->fd == -1)
     {
-        toReturn = false;
+        shm->data = NULL;
+        return false;
     }
+    shm->data = mmap(0,sizeof(shared_data_t),(PROT_WRITE | PROT_READ), MAP_SHARED, shm->fd,0);
+    return true;
 
-    bool final_check = shm->data == NULL;
-    if(final_check)
+    /**
+    bool toReturn;
+    bool final_check;
+    
+    toReturn = true;
+    shm->fd = shm_open(share_name,(O_RDWR),0);
+    shm->data = mmap(0 ,sizeof(shared_data_t), (PROT_WRITE | PROT_READ), MAP_SHARED, shm->fd, 0);
+    final_check = shm->data != NULL;
+    
+    if(shm->fd >= 0 && final_check && !(shm->data == MAP_FAILED))
+    {
+        toReturn = true;
+    }
+    else
     {
         toReturn = false;
     }
+    
     // Modify the remaining stub only if necessary.
     return toReturn;
+    */
 }
 
 /**
