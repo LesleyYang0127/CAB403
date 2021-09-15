@@ -243,7 +243,8 @@ void dv_remove_at( dbl_vector_t* vec, size_t pos );
  * 
  * PRE: dv_init(vec) has previously been invoked.
  * 
- * POST: vec->capacity == old_capacity
+ * POST: 
+ * vec->capacity == old_capacity
  * AND vec->size == old_size
  * AND vec->data == old_data
  * AND for all i in [0..vec->size) callback(vec->data[i], info) has been invoked.
